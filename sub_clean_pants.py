@@ -13,7 +13,7 @@ Usage:
        python sub_clean_pants.py -d dir
 """
 
-import python.subtraction.pyremap.wcsremap as remap
+import python.subtraction.wcsremap as remap
 import os, re, glob, sys, getopt, shutil
 
 __author__ = "Jonny Elliott"

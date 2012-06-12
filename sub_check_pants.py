@@ -14,7 +14,7 @@ Usage:
 """
 
 import python.subtraction.sub_mass_pypants as bypants
-import python.subtraction.pyremap.wcsremap as remap
+import python.subtraction.wcsremap as remap
 import os, re, glob, sys, getopt
 
 __author__ = "Jonny Elliott"

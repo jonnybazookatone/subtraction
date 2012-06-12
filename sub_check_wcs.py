@@ -13,7 +13,7 @@ Usage:
        python sub_check_wcs.py -d dir
 """
 
-import python.subtraction.pyremap.wcsremap as remap
+import python.subtraction.wcsremap as remap
 import os, re, glob, sys, getopt
 
 __author__ = "Jonny Elliott"

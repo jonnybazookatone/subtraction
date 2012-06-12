@@ -15,7 +15,7 @@ Usage:
 
 from python.imclass.image import imFits
 #from pyraf import iraf
-import python.subtraction.pyremap.wcsremap as remap
+import python.subtraction.wcsremap as remap
 import os, re, glob, sys, getopt
 
 __author__ = "Jonny Elliott"

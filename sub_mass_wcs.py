@@ -21,7 +21,7 @@ Usage:
         output: OB/band/subtraction/remappings/input_remapping.fits
 """
 
-import python.subtraction.pyremap.wcsremap as remap
+import python.subtraction.wcsremap as remap
 import os, re, glob, sys, getopt, shutil
 
 __author__ = "Jonny Elliott"

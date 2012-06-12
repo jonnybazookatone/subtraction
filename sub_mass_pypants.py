@@ -21,7 +21,7 @@ Usage:
 
 from python.imclass.image import imFits
 from python.subtraction.sub_pypants import main as pypants
-import python.subtraction.pyremap.wcsremap as remap
+import python.subtraction.wcsremap as remap
 import os, re, glob, sys, getopt, numpy
 
 __author__ = "Jonny Elliott"

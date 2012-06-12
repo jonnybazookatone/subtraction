@@ -111,7 +111,7 @@ def big_pants(directory, allpars=False, verbose=False, band=False, OB=False):
 	if not band:
 		bandList = ["g", "r", "i", "z", "J", "H", "K"]
 	else:
-		bandList = [band]
+		bandList = band
 
 	
 	# Run over OBs
@@ -145,7 +145,7 @@ def big_pants(directory, allpars=False, verbose=False, band=False, OB=False):
 					os.mkdir(subpath)
 					print "Master subtraction folder made: %s" % (subpath)
 				except:
-					print "Master subtraction folder already exists"
+					print "Master subtraction folder already exists (%s)" % (subpath)
 				try:
 					os.mkdir(cubeoutpath)
 					print "Cube folder sucessfully made."

@@ -10,7 +10,7 @@
 Summary:
         Run HOTPANTS with several different PSF and STAMP sizes
 Usage:
-        sub_mass_pypants.py -d directory -a True/False -v True/False -b r
+        sub_mass_pypants.py --d directory --a True/False --v True/False --b r
         
         d = directory with OB*/
         a = all or single PSF/STAMP combination
@@ -19,10 +19,12 @@ Usage:
 
 """
 
+import os, re, glob, sys, numpy
+from optparse import OptionParser
+
 from python.imclass.image import imFits
 from python.subtraction.sub_pypants import main as pypants
 import python.subtraction.wcsremap as remap
-import os, re, glob, sys, getopt, numpy
 
 __author__ = "Jonny Elliott"
 __copyright__ = "Copyright 2012"
@@ -90,7 +92,7 @@ def parameters(verbose=False):
 			print "%s" % grid				
 	return gridcube	
 
-def big_pants(directory, allpars=False, verbose=False, band=False):
+def big_pants(directory, allpars=False, verbose=False, band=False, OB=False):
 
 	print "#########################"
 	print "MASS HOTPANTS SUBTRACTION"
@@ -99,7 +101,11 @@ def big_pants(directory, allpars=False, verbose=False, band=False):
 
 	# Make folder list
 	print "Given directory: %s" % directory
-        OBList = glob.glob("%s/OB*" % directory)
+	if OB:
+		print "Given OB: %s" % OB
+		OBList = [OB]
+	else:
+		OBList = glob.glob("%s/OB*" % directory)
 	Missing_list = []
 	Skipped_list = []
 	if not band:
@@ -202,43 +208,22 @@ def big_pants(directory, allpars=False, verbose=False, band=False):
 
 if __name__ == "__main__":
 
-	# Key list for input & other constants, stupid final colon
-        key_list = 'd:v:a:b:'
+	# Parse and run
+        parser = OptionParser()
+        parser.add_option('--d', dest='directory', help='Directory location of remappings/', default=False)
+        parser.add_option('--v', dest='verbose', help='Verbose output', default=True)
+        parser.add_option('--a', dest='allpars', help='All parameters', default=True)
+        parser.add_option('--b', dest='band', help='Bands to carry out on', default=None)
+        parser.add_option('--OB', dest='OB', help='OB to run on', default=None)
+        (options, args) = parser.parse_args()
 
-        # Check input
-        try:
-                x=sys.argv[1:]
-        except:
-                print __doc__ 
-                sys.exit(0)
+	if options.band:
+		band = options.band.split(",")
+	else:
+		band = ['g', 'r', 'i', 'z', 'J', 'H', 'K']
 
-        # Take the input & sort it out
-	band, directory, allpars, verbose = False, False, True, True
-        option, remainder = getopt.getopt(sys.argv[1:], key_list)
-        for opt, arg in option:
-                flag = opt.replace('-','')
-                
-		if flag == "d":
-			directory = arg  
-		elif flag == "v":
-			if arg == "False":
-				verbose = False
-			else:
-				verbose = True
-		elif flag == "a":
-			if arg == "False":
-				allpars = False
-			else:
-				allpars = True
-				
-		elif flag == "b":
-			band = arg
-		else:
-			print __doc__
-			sys.exit(0)
-
-	if directory:
-		copyFits = big_pants(directory, allpars=allpars, verbose=verbose, band=band)
+	if options.directory:
+		copyFits = big_pants(options.directory, allpars=options.allpars, verbose=options.verbose, band=band, OB=options.OB)
 	else:
 		print __doc__
 		sys.exit(0)

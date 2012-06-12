@@ -11,15 +11,17 @@ Summary:
         Quick matlotlib representation of the output magnitudes given by sub_apphot.py and sub_mass_apphot.py.
 
 Usage:       
-        sub_qplot.py --f file
+        sub_qplot.py --f file --t time
         f: file with magnitudes given from sub_mass_apphot
-        
+	t: time array (MJD)
+
         if you include a "MJD.txt" it is used to normalise the light curve to GRB t0
 """
 
 import sys
 import os
 import matplotlib
+import numpy
 matplotlib.use("WX")
 import matplotlib.pyplot as plt
 from optparse import OptionParser
@@ -65,13 +67,19 @@ def plot(infile, timefile):
 		lsplit = i.replace("\n", "").split(" ")
 
 		timeArray.append(float(lsplit[1]) - t0)
-		magArray.append(float(lsplit[2]))
+		timeErrArray.append(float(lsplit[2]))
+		magArray.append(float(lsplit[3]))
+		
 		magErrArray.append(0.1)
+
+	# seconds
+	timeArray = numpy.array(timeArray) * 60*60*24.
+	timeErrArray = numpy.array(timeErrArray)
 
 	# Plot onto graph
 	fig = plt.figure(0)
 	ax = fig.add_subplot(111)
-	ax.errorbar(timeArray, magArray, yerr=magErrArray, fmt="o")
+	ax.errorbar(timeArray, xerr=numpy.array(timeErrArray), y=magArray, yerr=magErrArray, fmt="o")
 	ax.invert_yaxis()
 	ax.set_xlabel("Time [s]")
 	ax.set_ylabel("Brightness [mag]")

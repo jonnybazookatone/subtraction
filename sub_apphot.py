@@ -81,7 +81,17 @@ def main(directory, band, objectfile):
 	SubObject.copyObjectProperties(objectOfInterest)
 	SubObject.findLogicalPosition(write=True)
 
-	# Noise image
+	# Photometry
+	#
+	# Normal image
+	#
+	fwhm = InitialImage._MEDFWHM
+	SubObject.setAps(fap=fwhm, fdan=2*fwhm, fan=2.2*fwhm, scale=1)
+	SubObject.getAps(write=True)
+	SubtractedImage.runApperturePhotometryOnObject(SubObject)
+	#
+	# Noise image 
+	#
 	NoiseImage = imFits()
 	NoiseImage._Band = band
 	NoiseImage._Name = "%s/%s/sub/best/diff_%s_noise.fits" % (directory, NoiseImage._Band, NoiseImage._Band)
@@ -97,19 +107,12 @@ def main(directory, band, objectfile):
 	NoiseObject._parentimage = NoiseSquaredImage._Name
 	NoiseObject.copyObjectProperties(objectOfInterest)
 	NoiseObject.findLogicalPosition(write=True)
-
-	# Photometry
-	#
-	# Normal image
-	#
-	SubtractedImage.runApperturePhotometryOnObject(SubObject)
 	
-	#
-	# Noise image 
-	#
 	NoiseSquaredImage.runApperturePhotometryOnObject(NoiseObject)
 
-	return SubObject._midMJD, SubObject._appMag, SubObject._appMagErr, NoiseObject._appMag, SubObject._appMagErr, SubObject, NoiseObject
+	InitialImage.loadHeader()
+	timeError = InitialImage.getHeader("EXPTIME")
+	return SubObject._midMJD, SubObject._midMJDErr, SubObject._appMag, SubObject._appMagErr, NoiseObject._appMag, SubObject._appMagErr, SubObject, NoiseObject
 
 if __name__ == "__main__":
 

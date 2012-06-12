@@ -17,7 +17,7 @@ Usage:
 	o: object of interest co-ordinate file (wcs)
 """
 
-import sys, os, shutil, glob, getopt
+import sys, os, shutil, glob, getopt, scipy
 import matplotlib.pyplot as plt
 from sub_apphot import main as sub_apphot
 
@@ -52,14 +52,15 @@ def main(directory, bandList, objint):
 		for OB in OBList:
 			
 			# Run sub_apphot
-			time, sub_mag, sub_magerr, noise_mag, noise_magerr, subobj, noiseobj = sub_apphot(OB, band, objint)
+			time, time_err, sub_mag, sub_magerr, noise_mag, noise_magerr, subobj, noiseobj = sub_apphot(OB, band, objint)
+			print "Noise mag:", noise_mag, float(noise_mag)/2.0
 			if noise_magerr != "INDEF":
 				sub_magerr2 = float(noise_magerr) / 2.0
 			else:
 				sub_magerr2 = 0
 
 			# Write
-			magfile.write("%s %s %s %s\n" % (OB, time, sub_mag, sub_magerr2))
+			magfile.write("%s %s %s %s %s\n" % (OB, time, time_err, sub_mag, sub_magerr2))
 			
 		# close file
 		magfile.close()

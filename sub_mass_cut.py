@@ -66,7 +66,12 @@ def main(directory, band=None, verbose=False, regionflag=None):
 			else:
 				regionfile = "%s/cut.reg" % (bandpath)
 			print "regionfile: %s" % regionfile
-			infile = "%s/science_mapping_%s_mko.fits" % (bandpath, band)
+			try:
+				infile = "%s/science_mapping_%s_mko.fits" % (bandpath, band)
+			except:
+				print "No makeobject was used"
+				infile = "%s/science_mapping_%s.fits" % (bandpath, band)
+
 			outfile = "%s/remcut_%s.fits" % (bandpath, band)
 			templateband = "%s/template_remapping_%s.fits" % (bandpath, band)
 			templateout = "%s/template_cut_%s.fits" % (bandpath, band)

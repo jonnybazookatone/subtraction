@@ -26,8 +26,6 @@ __maintainer__ = "Jonny Elliott"
 __email__ = "jonnyelliott@mpe.mpg.de"
 __status__ = "Prototype"
 
-Usage = """"""
-
 def main(template, input, output, wcsregister=True):
 
 	print "###################################"
@@ -53,7 +51,7 @@ if __name__ == "__main__":
         try:
                 x=sys.argv[1]
         except:
-                print Usage 
+                print __doc__ 
                 sys.exit(0)
 
         # Take the input & sort it out
@@ -73,7 +71,7 @@ if __name__ == "__main__":
 			else:
 				wcsregister = False
 		else:
-			print Usage
+			print __doc__
 			sys.exit(0)
 
 	main(templatename, inputname, outputname, wcsregister)

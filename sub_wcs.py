@@ -14,7 +14,7 @@ Usage:
         python sub_make_onewcs.py -t tempaltefits -i inputfits -o outputname -w True/False
 """
 
-import subtraction.wcsremap as remap
+import python.subtraction.wcsremap as remap
 import os, re, glob, sys, getopt
 
 __author__ = "Jonny Elliott"

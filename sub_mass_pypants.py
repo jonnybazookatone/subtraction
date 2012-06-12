@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 """
  ================================
 | HOTPANTS Data Analysis Pipeline |
@@ -25,7 +25,7 @@ import python.subtraction.wcsremap as remap
 import os, re, glob, sys, getopt, numpy
 
 __author__ = "Jonny Elliott"
-__copyright__ = "Copyright 2011"
+__copyright__ = "Copyright 2012"
 __credits__ =  "Felipe Olivares"
 __license__ = "GPL"
 __version__ = "1.0"

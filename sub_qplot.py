@@ -11,11 +11,12 @@ Summary:
         Quick matlotlib representation of the output magnitudes given by sub_apphot.py and sub_mass_apphot.py.
 
 Usage:       
-        sub_qplot.py --f file --t time
+        sub_qplot.py --f file --t time --w y
         f: file with magnitudes given from sub_mass_apphot
 	t: time array (MJD)
-
-        if you include a "MJD.txt" it is used to normalise the light curve to GRB t0
+	   if you include a "MJD.txt" it is used to normalise the light curve to GRB t0
+        
+        w: write output; y [Default: False]
 """
 
 import sys
@@ -35,7 +36,7 @@ __maintainer__ = "Jonny Elliott"
 __email__ = "jonnyelliott@mpe.mpg.de"
 __status__ = "Prototype"
 
-def plot(infile, timefile):
+def plot(infile, timefile, write):
 	"""
 	Plotting routine used. 
 	It is run for a single file, so can be called multiple times.
@@ -70,7 +71,7 @@ def plot(infile, timefile):
 		timeErrArray.append(float(lsplit[2]))
 		magArray.append(float(lsplit[3]))
 		
-		magErrArray.append(0.1)
+		magErrArray.append(float(lsplit[4]))
 
 	# seconds
 	timeArray = numpy.array(timeArray) * 60*60*24.
@@ -85,16 +86,23 @@ def plot(infile, timefile):
 	ax.set_ylabel("Brightness [mag]")
 	ax.set_xscale("log")
 	plt.draw()
+	
+	if write:
+		outputf = open("lc.dat", "w")
+		for i in range(len(timeArray)):
+			outputf.write("%f %f %f %f\n" % (timeArray[i], timeErrArray[i], magArray[i], magErrArray[i]))
+		outputf.close()
 
 if __name__ == "__main__":
 
         parser = OptionParser()
         parser.add_option('--f', dest='filelist', help='input aperture file', default=None)
         parser.add_option('--t', dest='time', help='time of grb t0', default=None)
+        parser.add_option('--w', dest='write', help='write output', default=False)
         (options, args) = parser.parse_args()
 
 	if options.filelist and options.time:
-		plot(options.filelist, options.time)
+		plot(options.filelist, options.time, options.write)
 		plt.show()
 	else:
 		print __doc__

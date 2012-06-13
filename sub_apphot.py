@@ -100,18 +100,25 @@ def main(directory, band, objectfile):
 	NoiseSquaredImage = imFits()
 	NoiseSquaredImage._Band = band
 	NoiseSquaredImage._Name = NoiseImage.squareMyself()
-	NoiseSquaredImage._skySTDEV = InitialImage._skySTDEV
+	#NoiseSquaredImage._skySTDEV = InitialImage._skySTDEV
+	NoiseSquaredImage.getBackgroundSTDEV()
 	NoiseSquaredImage._MEDFWHM = InitialImage._MEDFWHM
 
 	NoiseObject = imObject()
 	NoiseObject._parentimage = NoiseSquaredImage._Name
 	NoiseObject.copyObjectProperties(objectOfInterest)
+	NoiseObject.setAps(fap=fwhm, fdan=2*fwhm, fan=2.2*fwhm, scale=1)
 	NoiseObject.findLogicalPosition(write=True)
 	
 	NoiseSquaredImage.runApperturePhotometryOnObject(NoiseObject)
+	subError = NoiseSquaredImage.calculateError(SubObject, NoiseObject)
 
 	InitialImage.loadHeader()
 	timeError = InitialImage.getHeader("EXPTIME")
+	
+	# Set the subtracted error from the noise image and not the error from the subtracted image
+	SubObject._appMagErr = subError
+	
 	return SubObject._midMJD, SubObject._midMJDErr, SubObject._appMag, SubObject._appMagErr, NoiseObject._appMag, SubObject._appMagErr, SubObject, NoiseObject
 
 if __name__ == "__main__":

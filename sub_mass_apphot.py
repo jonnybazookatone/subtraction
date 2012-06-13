@@ -60,7 +60,7 @@ def main(directory, bandList, objint):
 				sub_magerr2 = 0
 
 			# Write
-			magfile.write("%s %s %s %s %s\n" % (OB, time, time_err, sub_mag, sub_magerr2))
+			magfile.write("%s %s %s %s %s\n" % (OB, time, time_err, sub_mag, sub_magerr))
 			
 		# close file
 		magfile.close()

@@ -7,7 +7,7 @@ sex_fwhm.py -f \"file.fits\""""
 import matplotlib.pyplot as plt
 import numpy, getopt, sys
 
-import sextractor.sextractor as sextractor
+import python.lib.sextractor as sextractor
 
 def main(filename):
 	# Create a SExtractor instance

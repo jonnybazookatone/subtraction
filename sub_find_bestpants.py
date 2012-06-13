@@ -161,7 +161,7 @@ def main(directory, bandList, objectOfInt):
 				# Test print
 				print CubeStats._STDDEV, CubeStats._MEAN
 
-				if abs(CubeStats._STDDEV) < bestSTDEV and abs(CubeStats._MEAN) < bestMEAN:
+				if abs(CubeStats._STDDEV) < bestSTDEV: #and abs(CubeStats._MEAN) < bestMEAN:
 					bestSTDEV = CubeStats._STDDEV
 					bestMEAN = CubeStats._MEAN
 					bestOBJECT = CubeStats

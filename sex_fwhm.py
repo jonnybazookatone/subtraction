@@ -48,6 +48,7 @@ def main(filename):
 	FWHMTwenty = int(0.2*FWHMListLength)
 	FWHMTwentyList = numpy.array([])
 
+	print "Number of stars used: %d" % (FWHMTwenty)
 	for FWHM in range(FWHMTwenty):
 
 		FWHMTwentyList = numpy.append(FWHMTwentyList, FWHMList[FWHM])

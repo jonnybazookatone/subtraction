@@ -66,11 +66,19 @@ def main(directory, band=None, verbose=False, regionflag=None):
 			else:
 				regionfile = "%s/cut.reg" % (bandpath)
 			print "regionfile: %s" % regionfile
-			try:
-				infile = "%s/science_mapping_%s_mko.fits" % (bandpath, band)
-			except:
-				print "No makeobject was used"
-				infile = "%s/science_mapping_%s.fits" % (bandpath, band)
+
+                        infile1 = "%s/science_mapping_%s_mko.fits" % (bandpath, band)
+                        infile2 = "%s/science_mapping_%s.fits" % (bandpath, band)
+
+			if os.path.exists(infile1):
+				infile = infile1
+				print "science format used: %s" % infile
+			elif os.path.exists(infile2):
+				infile = infile2
+                                print "science format used: %s" % infile
+			else:
+				print "Format not recognised"
+				sys.exit(0)
 
 			outfile = "%s/remcut_%s.fits" % (bandpath, band)
 			templateband = "%s/template_remapping_%s.fits" % (bandpath, band)

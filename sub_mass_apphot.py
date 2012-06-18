@@ -13,7 +13,7 @@ Usage:
         sub_mass_apphot.py -d . -b r -o object.dat
 
 	d: directory
-	b: band [g,r,i,z,J,H,K]
+	b: band [g,r,i,z,J,H,K], for more than one separate by commas, i.e. -band g,r,i
 	o: object of interest co-ordinate file (wcs)
 """
 

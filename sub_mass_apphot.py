@@ -69,40 +69,14 @@ def main(directory, bandList, objint):
 if __name__ == "__main__":
   
         parser = OptionParser()
-        parser.add_option('--f', dest='filelist', help='input aperture file', default=None)
-        parser.add_option('--t', dest='time', help='time of grb t0', default=None)
-        parser.add_option('--w', dest='write', help='write output', default=False)
+        parser.add_option('-d', dest='directory', help='directory of OBs', default=None)
+        parser.add_option('-b', dest='band', help='band', default=None)
+        parser.add_option('-o', dest='objint', help='object of interest', default=None)
         (options, args) = parser.parse_args()
-  
-  
-        # Key list
-        key_list = "d:b:o:"
-        directory, band, objint = None, None, None
 
-        # Obtain input
-        option, remainder = getopt.getopt(sys.argv[1:], key_list)
-        for opt, arg in option:
-                flag = opt.replace('-','')
-
-                if flag == "d":
-                        directory = arg
-		elif flag == "b":
-			if arg == "all":
-				band == ["g", "r", "i", "z", "J", "H", "K"]
-			else:
-				band = [arg]
-		elif flag == "o":
-			objint = arg
-#               elif flag == "x":
-#                       ra = arg
-#               elif flag == "y":
-#                       dec = arg
-                else:
-                        print __doc__
-			print sys.exit(0)
-
-        if directory and band and objint:
-                print main(directory, band, objint)
+        if options.directory and options.band and options.objint:
+		band = options.band.split(",")
+                print main(options.directory, band, options.objint)
         else:
                 print __doc__
                 sys.exit(0)

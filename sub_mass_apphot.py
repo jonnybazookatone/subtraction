@@ -19,7 +19,7 @@ Usage:
 
 import sys
 import glob
-import getopt
+from optparse import OptionParser
 from sub_apphot import main as sub_apphot
 
 __author__ = "Jonny Elliott"

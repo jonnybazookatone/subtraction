@@ -10,11 +10,12 @@
 Summary:
         Carry out photometry on all the "best" images found using hotpants.
 Usage:
-        sub_mass_apphot.py -d . -b r -o object.dat
+        sub_mass_apphot.py -d . -b r -o object.dat -a apertures
 
 	d: directory
 	b: band [g,r,i,z,J,H,K], for more than one separate by commas, i.e. -band g,r,i
 	o: object of interest co-ordinate file (wcs)
+	a: apertures to use for your objects, must be a file, with format of "fap fdap fan", e.g. "1 2 3".
 """
 
 import sys
@@ -31,12 +32,23 @@ __maintainer__ = "Jonny Elliott"
 __email__ = "jonnyelliott@mpe.mpg.de"
 __status__ = "Prototype"
 
-def main(directory, bandList, objint):
+def main(directory, bandList, objint, apertures=False):
 
 	# Script outline
 	#
 	# 1. Find all the OBs
 	# 2. Go through all the bands and run the subroutine named sub_apphot.py
+
+
+	if apertures:
+		apfi = open(apertures, "r")
+		apfiline = apfi.readlines()
+		apfi.close()
+		
+		apfiline.replace("\n","").split(" ")
+		fap, fdap, fan = apfiline[0], apfiline[1], apfiline[2]
+	else:
+		fap, dfap, fan = False, False, False
 
 	# OBs
 	#
@@ -53,7 +65,7 @@ def main(directory, bandList, objint):
 		for OB in OBList:
 			
 			# Run sub_apphot
-			time, time_err, sub_mag, sub_magerr, noise_mag, noise_magerr, subobj, noiseobj = sub_apphot(OB, band, objint)
+			time, time_err, sub_mag, sub_magerr, noise_mag, noise_magerr, subobj, noiseobj = sub_apphot(OB, band, objint, fap=fap, fdan=fdan, fan=fan)
 			print "Noise mag:", noise_mag, float(noise_mag)/2.0
 			if noise_magerr != "INDEF":
 				sub_magerr2 = float(noise_magerr) / 2.0
@@ -72,6 +84,7 @@ if __name__ == "__main__":
         parser.add_option('-d', dest='directory', help='directory of OBs', default=None)
         parser.add_option('-b', dest='band', help='band', default=None)
         parser.add_option('-o', dest='objint', help='object of interest', default=None)
+        parser.add_option('-a', dest='apertures', help='apertures', default=None)
         (options, args) = parser.parse_args()
 
         if options.directory and options.band and options.objint:

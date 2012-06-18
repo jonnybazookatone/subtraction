@@ -27,7 +27,7 @@ __maintainer__ = "Jonny Elliott"
 __email__ = "jonnyelliott@mpe.mpg.de"
 __status__ = "Prototype"
 
-def main(directory, band, objectfile):
+def main(directory, band, objectfile, fap=False, fdan=False, fan=False):
 
 	# Open and parse objectfile
 	objectOfInterest = imObject()
@@ -87,7 +87,16 @@ def main(directory, band, objectfile):
 	# Normal image
 	#
 	fwhm = InitialImage._MEDFWHM
-	SubObject.setAps(fap=fwhm, fdan=2*fwhm, fan=2.2*fwhm, scale=1)
+	if fap and fdan and fan:
+		fap = fap*fwhm
+		fdan = fdan*fwhm
+		fan = fan*fwhm
+	else:
+		fap = fwhm
+		fdan = 2*fwhm
+		fan = 2.2*fwhm
+		
+	SubObject.setAps(fap=fap, fdan=fdan, fan=fan, scale=1)
 	SubObject.getAps(write=True)
 	SubtractedImage.runApperturePhotometryOnObject(SubObject)
 	#

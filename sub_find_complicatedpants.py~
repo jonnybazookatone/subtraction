@@ -2,26 +2,23 @@
 """
  ================================
 | HOTPANTS Data Analysis Pipeline |
-|         v1.0                    |
+|         v1.0                   |
  ================================
-| sub_find_bestpants.py |
- =======================
+| sub_find_complicatedpants.py |
+ ==============
 
 Summary:
         Finds the best subtraction based on the MEAN and STDDEV of the closest object to the object of interest
 Usage:
-        sub_find_bestpants.py -d . -b 'all = grizJHK' -o objectofinterest.wcs
-        
-        d: directory to run on
-        b: band to run on
-        o: supply a file called "objectofinterest.dat", of the type "name ra dec" it will find a source closest to this. Otherwise it uses a default which will not work.
-	   format of file:   "NAME" "RA" "DEC"
+        sub_find_complicatedpants.py -d . -b 'all = grizJHK'
+        If you supply a file called "objectofinterest.dat", of the type "name ra dec" it will find a source closest to this. Otherwise it uses a default which will not work.
 """
+
 import os, glob, sys, shutil, getopt
 from python.imclass.image import imFits, imObject
 
 __author__ = "Jonny Elliott"
-__copyright__ = "Copyright 2012"
+__copyright__ = "Copyright 2011"
 __credits__ =  "Felipe Olivares"
 __license__ = "GPL"
 __version__ = "1.0"
@@ -29,7 +26,7 @@ __maintainer__ = "Jonny Elliott"
 __email__ = "jonnyelliott@mpe.mpg.de"
 __status__ = "Prototype"
 
-def main(directory, bandList, objectOfInt):
+def main(directory, bandList):
 
 	# Script outline
 	#
@@ -51,23 +48,10 @@ def main(directory, bandList, objectOfInt):
 #        bandList = ["g", "r", "i", "z", "J", "H", "K"]
 
 	# Specify the object of interest, e.g. GRB 110918A
-        objectOfInterest = imObject()
-        
-        if objectOfInt:
-		print "Using object file, %s" % objectOfInt
-                ooifile = open(objectOfInt, "r")
-                ooilines = ooifile.readlines()[0].replace("\n", "").split(" ")
-                ooifile.close()
-
-                #info = ooilines.split(" ")
-                objectOfInterest._Name = ooilines[0]
-                objectOfInterest._ra = float(ooilines[1])
-                objectOfInterest._dec = float(ooilines[2])
-                
-        else:
-                objectOfInterest._Name = "GRB 110918A"
-                objectOfInterest._ra = float(32.53894)
-                objectOfInterest._dec = float(-27.10548)
+	objectOfInterest = imObject()
+	objectOfInterest._Name = "GRB 110918A"
+	objectOfInterest._ra = float(32.53894)
+	objectOfInterest._dec = float(-27.10548)
 
 	# Run over bands
 	for band in bandList:
@@ -109,7 +93,7 @@ def main(directory, bandList, objectOfInt):
 				#ReferenceImage.printInfo()
 			
 				print "Acquiring nearest neighbour to object of interest"
-				ClosestNeighbour = ReferenceImage.findNearestNeighbour(tempInterest, rcirc=100, write=True)
+				ClosestNeighbour = ReferenceImage.findNearestNeighbour(tempInterest, rcirc=50, write=True)
 				#ClosestNeighbour[0].printInfo()
 				ClosestNeighbour[0]._Name = "Closest star"
 				ClosestNeighbour[0]._parentimage = ReferenceImage._Name
@@ -146,7 +130,7 @@ def main(directory, bandList, objectOfInt):
 				tempClosestNeighbour.copyObjectProperties(ClosestNeighbour[0])
 				tempClosestNeighbour._parentimage = cubeSubtractedImage._Name
 				tempClosestNeighbour.findLogicalPosition(write=True)
-				cubeSubtractedImage.getObjectStatistics(tempClosestNeighbour)
+				cubeSubtractedImage.getObjectStatistics(tempClosestNeighbour, multiple=4)
 				#tempClosestNeighbour.printInfo()
 				
 				# Collect the cube output
@@ -154,19 +138,50 @@ def main(directory, bandList, objectOfInt):
 				
 			# Find the best cube
 			# 	1. Set fake STDDEV and MEAN
-			#	2. loop through to find the best
-			bestSTDEV, bestMEAN, bestOBJECT = 10000000, 10000000, "None"
+			#	2. loop through to find the best 3 MEANS and then the bestSTDEV
+			bestSTDEV, bestMEAN, bestMEDIAN, bestOBJECT, bestPercentageDiff = 10000000, 10000000, 10000000, False, 10000000
+
+
+			# Best STDDEV
+			for CubeStats in ListOfCubeStats:
+				if abs(CubeStats._STDDEV) < bestSTDEV:
+					bestSTDEV = abs(CubeStats._STDDEV)
+
+			# Best MEDIAN
+			for CubeStats in ListOfCubeStats:
+				if abs(CubeStats._MEDIAN) < bestMEDIAN:
+					bestMEDIAN = abs(CubeStats._MEDIAN)
+
+			# Best MEAN
+			for CubeStats in ListOfCubeStats:
+				if abs(CubeStats._MEAN) < bestMEAN:
+					bestMEAN = abs(CubeStats._MEAN)
+
+			print "Minimum STDDEV: %f" % bestSTDEV
+			print "Minimum MEDIAN: %f" % bestMEDIAN
+			print "Minimum MEAN: %f\n" % bestMEAN
+			bar = 1.0
+			print "STDDEV MEAN MEDIAN"
 			for CubeStats in ListOfCubeStats:
 
 				# Test print
-				print CubeStats._STDDEV, CubeStats._MEAN
+				print CubeStats._STDDEV, CubeStats._MEAN, CubeStats._MEDIAN, CubeStats._parentimage
 
-				if abs(CubeStats._STDDEV) < bestSTDEV: #and abs(CubeStats._MEAN) < bestMEAN:
-					bestSTDEV = CubeStats._STDDEV
-					bestMEAN = CubeStats._MEAN
+				percentageDiff = abs(1 - ( (CubeStats._MEDIAN/bestMEDIAN) / (bestMEAN/CubeStats._MEAN) )) #/ ( abs(CubeStats._MEDIAN  ) ) 
+				if percentageDiff < bestPercentageDiff:
+				#if abs(CubeStats._MEDIAN) < (bestMEDIAN+0.1) and abs(CubeStats._MEAN) < bestMEAN+0.1:
+					#bestMEDIAN = abs(CubeStats._MEDIAN)
+					#bestSTDEV = abs(CubeStats._STDDEV)
+					#bestMEAN = abs(CubeStats._MEAN)
 					bestOBJECT = CubeStats
+					bestPercentageDiff = percentageDiff
 
-			#print "The best object is:"
+			if not bestOBJECT:
+				print "No Object found to fit criteria."
+				return 0
+
+			print "The best object is:"
+			print bestOBJECT._STDDEV, bestOBJECT._MEAN, bestOBJECT._MEDIAN
 			#bestOBJECT.printInfo()
 
 			# Copy it to a "best" directory
@@ -175,7 +190,6 @@ def main(directory, bandList, objectOfInt):
 				print "File exists"
 				shutil.rmtree(bestoutput)
 				print "Deleted"
-
 			shutil.copytree(bestOBJECT._parentimage.replace("diff_%s.fits" % band, ""), bestoutput)
 			#print glob.glob(bestoutput+"*")			
 			print "Finished OB,band: %s, %s" % (OB,band)
@@ -184,8 +198,8 @@ def main(directory, bandList, objectOfInt):
 
 if __name__ == "__main__":
         # Key list
-        key_list = "d:b:o:"
-        objectOfInt, directory, band = None, None, None
+        key_list = "d:b:"
+        directory, band = None, None
 
         # Obtain input
         option, remainder = getopt.getopt(sys.argv[1:], key_list)
@@ -199,8 +213,6 @@ if __name__ == "__main__":
                                 band == ["g", "r", "i", "z", "J", "H", "K"]
                         else:
                                 band = [arg]
-                elif flag =="o":
-			objectOfInt = arg
 #               elif flag == "x":
 #                       ra = arg
 #               elif flag == "y":
@@ -210,7 +222,7 @@ if __name__ == "__main__":
                         print sys.exit(0)
 
         if directory and band:
-                print main(directory, band, objectOfInt)
+                print main(directory, band)
         else:
                 print __doc__
                 sys.exit(0)

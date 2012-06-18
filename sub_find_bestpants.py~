@@ -71,6 +71,7 @@ def main(directory, bandList, objectOfInt):
 
 	# Run over bands
 	for band in bandList:
+		print "Band: %s" % band
 		# We want to pick only 1 reference star for each band, so that it is consistent
 		# Select this by a "chosen" flag
 		chosenflag = False
@@ -109,7 +110,7 @@ def main(directory, bandList, objectOfInt):
 				#ReferenceImage.printInfo()
 			
 				print "Acquiring nearest neighbour to object of interest"
-				ClosestNeighbour = ReferenceImage.findNearestNeighbour(tempInterest, rcirc=100, write=True)
+				ClosestNeighbour = ReferenceImage.findNearestNeighbour(tempInterest, rcirc=50, write=True)
 				#ClosestNeighbour[0].printInfo()
 				ClosestNeighbour[0]._Name = "Closest star"
 				ClosestNeighbour[0]._parentimage = ReferenceImage._Name

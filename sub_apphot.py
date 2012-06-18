@@ -14,6 +14,7 @@ Usage:
 """
 
 import sys, os, shutil, glob, getopt
+from optparse import OptionParser
 
 from python.imclass.image import imFits, imObject
 
@@ -123,31 +124,15 @@ def main(directory, band, objectfile):
 
 if __name__ == "__main__":
 
-	# Key list
-	key_list = "d:b:o:"
-	directory, band, obji = None, None, None
 
-	# Obtain input
-        option, remainder = getopt.getopt(sys.argv[1:], key_list)
-        for opt, arg in option:
-                flag = opt.replace('-','')
+        parser = OptionParser()
+        parser.add_option('-d', dest='directory', help='directory of OBs', default=None)
+        parser.add_option('-b', dest='band', help='band', default=None)
+        parser.add_option('-o', dest='objint', help='object of interest', default=None)
+        (options, args) = parser.parse_args()
 
-                if flag == "d":
-                        directory = arg
-                elif flag == "b":
-			band = arg
-		elif flag == "o":
-			obji = arg
-#		elif flag == "x":
-#			ra = arg
-#		elif flag == "y":
-#			dec = arg
-                else:
-                        print __doc__
-                        sys.exit(0)
-
-	if directory and band:
-		print main(directory, band, obji)
+	if options.directory and options.band and options.objint:
+		print main(options.directory, options.band, options.objint)
 	else:
 		print __doc__
 		sys.exit(0)

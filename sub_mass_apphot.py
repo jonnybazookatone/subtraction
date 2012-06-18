@@ -17,8 +17,9 @@ Usage:
 	o: object of interest co-ordinate file (wcs)
 """
 
-import sys, os, shutil, glob, getopt, scipy
-import matplotlib.pyplot as plt
+import sys
+import glob
+import getopt
 from sub_apphot import main as sub_apphot
 
 __author__ = "Jonny Elliott"
@@ -66,6 +67,14 @@ def main(directory, bandList, objint):
 		magfile.close()
 
 if __name__ == "__main__":
+  
+        parser = OptionParser()
+        parser.add_option('--f', dest='filelist', help='input aperture file', default=None)
+        parser.add_option('--t', dest='time', help='time of grb t0', default=None)
+        parser.add_option('--w', dest='write', help='write output', default=False)
+        (options, args) = parser.parse_args()
+  
+  
         # Key list
         key_list = "d:b:o:"
         directory, band, objint = None, None, None

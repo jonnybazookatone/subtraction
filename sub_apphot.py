@@ -2,7 +2,7 @@
 """
  ================================
 | HOTPANTS Data Analysis Pipeline |
-|         v1.0                   |
+|         v1.1                   |
  ================================
 | sub_appphot.py |
  ==============
@@ -13,7 +13,7 @@ Usage:
         sub_apphot.py -d directory -b band -o objectfile
 """
 
-import sys, os, shutil, glob, getopt
+import sys
 from optparse import OptionParser
 
 from python.imclass.image import imFits, imObject
@@ -22,7 +22,7 @@ __author__ = "Jonny Elliott"
 __copyright__ = "Copyright 2012"
 __credits__ =  "Felipe Olivares"
 __license__ = "GPL"
-__version__ = "1.0"
+__version__ = "1.1"
 __maintainer__ = "Jonny Elliott"
 __email__ = "jonnyelliott@mpe.mpg.de"
 __status__ = "Prototype"
@@ -124,7 +124,7 @@ def main(directory, band, objectfile, fap=False, fdan=False, fan=False):
 	subError = NoiseSquaredImage.calculateError(SubObject, NoiseObject)
 
 	InitialImage.loadHeader()
-	timeError = InitialImage.getHeader("EXPTIME")
+	#timeError = InitialImage.getHeader("EXPTIME")
 	
 	# Set the subtracted error from the noise image and not the error from the subtracted image
 	SubObject._appMagErr = subError

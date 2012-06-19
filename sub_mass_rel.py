@@ -81,7 +81,8 @@ def sub_mass_rel(inifile):
 	logger.info("OBList: %s" % OBList)
 
 	# Copy all the .result files to the correct OB location
-	calibArray = []
+	#calibArray = []
+	calibDict = {}
 	for OB in OBList:
 	
 		search = "%s/%s/%s/*.result" % (sub_ini["ADMIN"]["observationdir"], OB, sub_ini["ADMIN"]["band"])
@@ -114,7 +115,7 @@ def sub_mass_rel(inifile):
 		for star in StarArray:
 			objID = resultDict.getNearbyObjs(star["RA"], star["DEC"]).keys()[0]
 			answer = sub_lib.checkdist(resultDict.objects[objID])
-			print answer
+
 			if answer < 0:
 				  if answer == -1:
 					  logger.info("\t #%d")
@@ -143,7 +144,7 @@ def sub_mass_rel(inifile):
 		
 		logger.info("Median Relative Difference: %f +/- %f" % (MedianRelativeDifference, MedianRelativeError))
 		
-		calibDict = {}
+
 		calibDict[OB] = {}
 		calibDict[OB]["MAG_REL_DIFF"] = MedianRelativeDifference
 		calibDict[OB]["MAG_REL_DIFF_ERR"] = MedianRelativeError
@@ -154,8 +155,8 @@ def sub_mass_rel(inifile):
 	difffile = "%s/remappings/%s_diff.dat" % (sub_ini["ADMIN"]["subtractiondir"], sub_ini["ADMIN"]["band"])
 	logger.info("To file: %s" % difffile)
 	diffout = open(difffile, "w")
+	
 	for OB in calibDict:
-		
 		diffout.write("./%s %f %f" % (OB, calibDict[OB]["MAG_REL_DIFF"],calibDict[OB]["MAG_REL_DIFF_ERR"]))
 	diffout.close()
 	

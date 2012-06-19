@@ -42,13 +42,15 @@ def parseIni(filename):
 			sys.exit(0)
 			
 		equalline = line.split("=")
-		iniDict[dictname][equalline[0]] = equalline[1]
+		if equalline[1].replace(".","").isdigit():
+			iniDict[dictname][equalline[0]] = float(equalline[1])
+		else:
+			iniDict[dictname][equalline[0]] = equalline[1]
 		
-	print iniDict
-
+	return iniDict
 
 def main():
-	parseIni("test.ini")
+	print parseIni("test.ini")
 
 if __name__ == "__main__":
 	main()

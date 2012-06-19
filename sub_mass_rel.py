@@ -202,7 +202,7 @@ def sub_mass_rel(inifile):
 			logger.warning("No OB match for: %s"  % appDict["OB"][i])
 			mag=0
 			mag_err=0
-			logger.warning("%s" % sys.exc_info())
+			logger.warning(sys.exc_info())
 			
 		logger.info("\t%s %.2f %.2f %.2f %.2f %.2f %.2f" % (appDict["OB"][i], appDict["MAG"][i], appDict["MAG_ERR"][i], tempCalib["MAG_REL_DIFF"], tempCalib["MAG_REL_DIFF_ERR"], mag, mag_err))
 		

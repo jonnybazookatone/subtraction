@@ -19,6 +19,8 @@ import glob
 import logging
 import optparse
 import numpy
+import scipy
+import sys
 
 import sub_lib
 import resultFile
@@ -167,12 +169,13 @@ def sub_mass_rel(inifile):
 	appout = sub_lib.parseApp(apphotfile)
 	appDict = {}
 	appDict["OB"] = appout[0]
-	appDict["TIME"] = appout[1]
-	appDict["TIME_ERR"] = appout[2]
-	appDict["MAG"] = appout[3]
-	appDict["MAG_ERR"] = appout[4]
+	appDict["TIME"] = (appout[1])
+	appDict["TIME_ERR"] = (appout[2])
+	appDict["MAG"] = (appout[3])
+	appDict["MAG_ERR"] = (appout[4])
 	
 	logger.info("Calculating relative photometry of each OB")
+	logger.info("------------------------------------------")
 	logger.info("\tOB Mag MagErr Diff DiffErr RelMag RelMagErr")
 	
 	AbsCalib = {}
@@ -186,11 +189,30 @@ def sub_mass_rel(inifile):
 	 
 		try:
 			tempCalib = calibDict[appDict["OB"][i].replace("./", "")]
-			mag = tempCalib["MAG"]
+					
+			mag = tempCalib["MAG_REL_DIFF"] + appDict["MAG"][i]
+			mag_err = scipy.sqrt(tempCalib["MAG_REL_DIFF_ERR"]**2 + appDict["MAG_ERR"][i]**2)
 			
+			AbsCalib["OB"].append(appDict["OB"][i])
+			AbsCalib["MAG"].append(mag)
+			AbsCalib["MAG_ERR"].append(mag_err)
+			AbsCalib["TIME"].append(appDict["TIME"][i])
+			AbsCalib["TIME_ERR"].append(appDict["TIME_ERR"][i])
 		except:
 			logger.warning("No OB match for: %s"  % appDict["OB"][i])
-		logger.info("%s" % appDict["OB"][i])
+			mag=0
+			mag_err=0
+			logger.warning("%s" % sys.exc_info())
+			
+		logger.info("\t%s %.2f %.2f %.2f %.2f %.2f %.2f" % (appDict["OB"][i], appDict["MAG"][i], appDict["MAG_ERR"][i], tempCalib["MAG_REL_DIFF"], tempCalib["MAG_REL_DIFF_ERR"], mag, mag_err))
+		
+	relabf = open(sub_ini["PHOTOMETRY"]["relout"], "w")
+	logger.info("Writing to absolute+relative photometry to file: %s" % (sub_ini["PHOTOMETRY"]["relout"]))
+	for i in range(len(AbsCalib["OB"])):
+		relabf.write("%s %f %f %f %f\n" % (AbsCalib["OB"][i], AbsCalib["TIME"][i], AbsCalib["TIME_ERR"][i], AbsCalib["MAG"][i], AbsCalib["MAG_ERR"][i]))
+	relabf.close()
+	
+	logger.info("Finished")
 	
 
 if __name__ == "__main__":

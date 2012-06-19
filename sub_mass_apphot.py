@@ -46,9 +46,9 @@ def main(directory, bandList, objint, apertures=False):
 		apfi.close()
 		
 		apfiline.replace("\n","").split(" ")
-		fap, fdap, fan = apfiline[0], apfiline[1], apfiline[2]
+		fap, fdan, fan = apfiline[0], apfiline[1], apfiline[2]
 	else:
-		fap, dfap, fan = False, False, False
+		fap, dfan, fan = False, False, False
 
 	# OBs
 	#
@@ -66,11 +66,6 @@ def main(directory, bandList, objint, apertures=False):
 			
 			# Run sub_apphot
 			time, time_err, sub_mag, sub_magerr, noise_mag, noise_magerr, subobj, noiseobj = sub_apphot(OB, band, objint, fap=fap, fdan=fdan, fan=fan)
-			print "Noise mag:", noise_mag, float(noise_mag)/2.0
-			if noise_magerr != "INDEF":
-				sub_magerr2 = float(noise_magerr) / 2.0
-			else:
-				sub_magerr2 = 0
 
 			# Write
 			magfile.write("%s %s %s %s %s\n" % (OB, time, time_err, sub_mag, sub_magerr))

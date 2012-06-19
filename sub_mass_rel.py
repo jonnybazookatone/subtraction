@@ -157,7 +157,7 @@ def sub_mass_rel(inifile):
 	diffout = open(difffile, "w")
 	
 	for OB in calibDict:
-		diffout.write("./%s %f %f" % (OB, calibDict[OB]["MAG_REL_DIFF"],calibDict[OB]["MAG_REL_DIFF_ERR"]))
+		diffout.write("./%s %f %f\n" % (OB, calibDict[OB]["MAG_REL_DIFF"],calibDict[OB]["MAG_REL_DIFF_ERR"]))
 	diffout.close()
 	
 	logger.info("--------------------------------------------")

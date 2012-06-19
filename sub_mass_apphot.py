@@ -48,7 +48,7 @@ def main(directory, bandList, objint, apertures=False):
 		apfiline.replace("\n","").split(" ")
 		fap, fdan, fan = apfiline[0], apfiline[1], apfiline[2]
 	else:
-		fap, dfan, fan = False, False, False
+		fap, fdan, fan = False, False, False
 
 	# OBs
 	#

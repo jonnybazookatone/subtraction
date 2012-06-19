@@ -23,7 +23,7 @@ import scipy
 import sys
 
 import sub_lib
-import python.lib.resultFile
+import python.lib.resultFile as resultFile
 
 __author__ = "Jonny Elliott"
 __copyright__ = "Copyright 2011"

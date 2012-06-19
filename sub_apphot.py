@@ -13,7 +13,7 @@ Usage:
         sub_apphot.py -d directory -b band -o objectfile
 """
 
-import sys, os, shutil, glob, getopt
+import sys
 from optparse import OptionParser
 
 from python.imclass.image import imFits, imObject
@@ -124,7 +124,7 @@ def main(directory, band, objectfile, fap=False, fdan=False, fan=False):
 	subError = NoiseSquaredImage.calculateError(SubObject, NoiseObject)
 
 	InitialImage.loadHeader()
-	timeError = InitialImage.getHeader("EXPTIME")
+	#timeError = InitialImage.getHeader("EXPTIME")
 	
 	# Set the subtracted error from the noise image and not the error from the subtracted image
 	SubObject._appMagErr = subError

@@ -2,7 +2,7 @@
 """
  ================================
 | HOTPANTS Data Analysis Pipeline |
-|         v1.0                   |
+|         v1.1                   |
  ================================
 | sub_appphot.py |
  ==============
@@ -22,7 +22,7 @@ __author__ = "Jonny Elliott"
 __copyright__ = "Copyright 2012"
 __credits__ =  "Felipe Olivares"
 __license__ = "GPL"
-__version__ = "1.0"
+__version__ = "1.1"
 __maintainer__ = "Jonny Elliott"
 __email__ = "jonnyelliott@mpe.mpg.de"
 __status__ = "Prototype"

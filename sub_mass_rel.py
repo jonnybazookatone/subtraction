@@ -163,7 +163,7 @@ def sub_mass_rel(inifile):
 	logger.info("Creating Absolute+Relative calibration")
 	logger.info("--------------------------------------------")
 	
-	apphotfile = "%s/%s" % (sub_ini["ADMIN"]["subtractiondir"], sub_ini["PHOTOMETRY"]["appout"])
+	apphotfile = "%s/remappings/%s" % (sub_ini["ADMIN"]["subtractiondir"], sub_ini["PHOTOMETRY"]["appout"])
 	logger.info("Opening sub_apphot output: %s" % (apphotfile))
 	
 	appout = sub_lib.parseApp(apphotfile)

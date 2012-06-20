@@ -191,7 +191,7 @@ def sub_mass_rel(inifile):
 		try:
 			tempCalib = calibDict[appDict["OB"][i].replace("./", "")]
 					
-			mag = tempCalib["MAG_REL_DIFF"] + appDict["MAG"][i]
+			mag = tempCalib["MAG_REL_DIFF"] - appDict["MAG"][i]
 			mag_err = scipy.sqrt(tempCalib["MAG_REL_DIFF_ERR"]**2 + appDict["MAG_ERR"][i]**2)
 			
 			AbsCalib["OB"].append(appDict["OB"][i])

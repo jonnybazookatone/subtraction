@@ -47,8 +47,10 @@ def main(directory, bandList, objint, apertures=False):
 		
 		apfiline.replace("\n","").split(" ")
 		fap, fdan, fan = apfiline[0], apfiline[1], apfiline[2]
+		print "loaded user apertures"
 	else:
 		fap, fdan, fan = False, False, False
+		print "using default apertures"
 
 	# OBs
 	#

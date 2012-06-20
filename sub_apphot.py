@@ -88,6 +88,10 @@ def main(directory, band, objectfile, fap=False, fdan=False, fan=False):
 	#
 	fwhm = InitialImage._MEDFWHM
 	if fap and fdan and fan:
+		print "User defined apertures"
+		print ""
+		print "fap fdan fan"
+		print "%f %f %f" % (fap, fdan, fan)
 		fap = fap*fwhm
 		fdan = fdan*fwhm
 		fan = fan*fwhm
@@ -117,7 +121,7 @@ def main(directory, band, objectfile, fap=False, fdan=False, fan=False):
 	NoiseObject = imObject()
 	NoiseObject._parentimage = NoiseSquaredImage._Name
 	NoiseObject.copyObjectProperties(objectOfInterest)
-	NoiseObject.setAps(fap=fwhm, fdan=2*fwhm, fan=2.2*fwhm, scale=1)
+	NoiseObject.setAps(fap=fap, fdan=fdan, fan=fan, scale=1)
 	NoiseObject.findLogicalPosition(write=True)
 	
 	NoiseSquaredImage.runApperturePhotometryOnObject(NoiseObject)
@@ -138,11 +142,22 @@ if __name__ == "__main__":
         parser.add_option('-d', dest='directory', help='directory of OBs', default=None)
         parser.add_option('-b', dest='band', help='band', default=None)
         parser.add_option('-o', dest='objint', help='object of interest', default=None)
+        parser.add_option('-a', dest='apertures', help='apertures', default=None)
         (options, args) = parser.parse_args()
 
 	if options.directory and options.band and options.objint:
-		print main(options.directory, options.band, options.objint)
-	else:
+	  
+		if options.apertures:
+			apfil = open(options.apertures, "r")
+			apf = apfil.readlines()
+			apfil.close()
+			aps = apf[0].replace("\n","").split(" ")
+			fap, fdan, fan = float(aps[0]), float(aps[1]), float(aps[2])
+		
+			print main(options.directory, options.band, options.objint, fap=fap, fdan=fdan, fan=fan)
+		else:
+			print main(options.directory, options.band, options.objint)
+	else:		
 		print __doc__
 		sys.exit(0)
 # Mon Dec 12 13:39:20 CET 2011

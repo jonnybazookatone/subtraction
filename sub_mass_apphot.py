@@ -43,8 +43,8 @@ def main(directory, bandList, objint, apertures=False):
 		apfi = open(apertures, "r")
 		apfiline = apfi.readlines()
 		apfi.close()
-		
-		apfiline.replace("\n","").split(" ")
+		print apfilines
+		apfiline[0].replace("\n","").split(" ")
 		fap, fdan, fan = apfiline[0], apfiline[1], apfiline[2]
 		print "loaded user apertures"
 	else:

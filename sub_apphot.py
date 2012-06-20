@@ -152,7 +152,7 @@ if __name__ == "__main__":
 			apf = apfil.readlines()
 			apfil.close()
 			aps = apf[0].replace("\n","").split(" ")
-			fap, fdan, fan = aps[0], aps[1], aps[2]
+			fap, fdan, fan = float(aps[0]), float(aps[1]), float(aps[2])
 		
 			print main(options.directory, options.band, options.objint, fap=fap, fdan=fdan, fan=fan)
 		else:

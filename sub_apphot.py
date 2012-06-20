@@ -151,7 +151,7 @@ if __name__ == "__main__":
 			apfil = open(options.apertures, "r")
 			apf = apfil.readlines()
 			apfil.close()
-			aps[0] = apf.replace("\n","").split(" ")
+			aps = apf[0].replace("\n","").split(" ")
 			fap, fdan, fan = aps[0], aps[1], aps[2]
 		
 			print main(options.directory, options.band, options.objint, fap=fap, fdan=fdan, fan=fan)

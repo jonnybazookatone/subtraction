@@ -2,7 +2,7 @@
 """
  ================================
 | HOTPANTS Data Analysis Pipeline |
-|         v1.0                   |
+|         v1.1                   |
  ================================
 | sub_appphot.py |
  ==============
@@ -13,7 +13,7 @@ Usage:
         sub_apphot.py -d directory -b band -o objectfile
 """
 
-import sys, os, shutil, glob, getopt
+import sys
 from optparse import OptionParser
 
 from python.imclass.image import imFits, imObject
@@ -22,7 +22,7 @@ __author__ = "Jonny Elliott"
 __copyright__ = "Copyright 2012"
 __credits__ =  "Felipe Olivares"
 __license__ = "GPL"
-__version__ = "1.0"
+__version__ = "1.1"
 __maintainer__ = "Jonny Elliott"
 __email__ = "jonnyelliott@mpe.mpg.de"
 __status__ = "Prototype"
@@ -88,6 +88,10 @@ def main(directory, band, objectfile, fap=False, fdan=False, fan=False):
 	#
 	fwhm = InitialImage._MEDFWHM
 	if fap and fdan and fan:
+		print "User defined apertures"
+		print ""
+		print "fap fdan fan"
+		print "%f %f %f" % (fap, fdan, fan)
 		fap = fap*fwhm
 		fdan = fdan*fwhm
 		fan = fan*fwhm
@@ -117,14 +121,14 @@ def main(directory, band, objectfile, fap=False, fdan=False, fan=False):
 	NoiseObject = imObject()
 	NoiseObject._parentimage = NoiseSquaredImage._Name
 	NoiseObject.copyObjectProperties(objectOfInterest)
-	NoiseObject.setAps(fap=fwhm, fdan=2*fwhm, fan=2.2*fwhm, scale=1)
+	NoiseObject.setAps(fap=fap, fdan=fdan, fan=fan, scale=1)
 	NoiseObject.findLogicalPosition(write=True)
 	
 	NoiseSquaredImage.runApperturePhotometryOnObject(NoiseObject)
 	subError = NoiseSquaredImage.calculateError(SubObject, NoiseObject)
 
 	InitialImage.loadHeader()
-	timeError = InitialImage.getHeader("EXPTIME")
+	#timeError = InitialImage.getHeader("EXPTIME")
 	
 	# Set the subtracted error from the noise image and not the error from the subtracted image
 	SubObject._appMagErr = subError
@@ -138,11 +142,22 @@ if __name__ == "__main__":
         parser.add_option('-d', dest='directory', help='directory of OBs', default=None)
         parser.add_option('-b', dest='band', help='band', default=None)
         parser.add_option('-o', dest='objint', help='object of interest', default=None)
+        parser.add_option('-a', dest='apertures', help='apertures', default=None)
         (options, args) = parser.parse_args()
 
 	if options.directory and options.band and options.objint:
-		print main(options.directory, options.band, options.objint)
-	else:
+	  
+		if options.apertures:
+			apfil = open(options.apertures, "r")
+			apf = apfil.readlines()
+			apfil.close()
+			aps = apf.replace("\n","").split(" ")
+			fap, fdan, fan = aps[0], aps[1], aps[2]
+		
+			print main(options.directory, options.band, options.objint, fap=fap, fdan=fdan, fan=fan)
+		else:
+			print main(options.directory, options.band, options.objint)
+	else:		
 		print __doc__
 		sys.exit(0)
 # Mon Dec 12 13:39:20 CET 2011

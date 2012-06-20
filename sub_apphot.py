@@ -88,6 +88,10 @@ def main(directory, band, objectfile, fap=False, fdan=False, fan=False):
 	#
 	fwhm = InitialImage._MEDFWHM
 	if fap and fdan and fan:
+		print "User defined apertures"
+		print ""
+		print "fap fdan fan"
+		print "%f %f %f" % (fap, fdan, fan)
 		fap = fap*fwhm
 		fdan = fdan*fwhm
 		fan = fan*fwhm
@@ -117,7 +121,7 @@ def main(directory, band, objectfile, fap=False, fdan=False, fan=False):
 	NoiseObject = imObject()
 	NoiseObject._parentimage = NoiseSquaredImage._Name
 	NoiseObject.copyObjectProperties(objectOfInterest)
-	NoiseObject.setAps(fap=fwhm, fdan=2*fwhm, fan=2.2*fwhm, scale=1)
+	NoiseObject.setAps(fap=fap, fdan=fdan, fan=fan, scale=1)
 	NoiseObject.findLogicalPosition(write=True)
 	
 	NoiseSquaredImage.runApperturePhotometryOnObject(NoiseObject)

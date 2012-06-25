@@ -92,9 +92,9 @@ def main(directory, band, objectfile, fap=False, fdan=False, fan=False):
 		print ""
 		print "fap fdan fan"
 		print "%f %f %f" % (fap, fdan, fan)
-		fap = fap*fwhm
-		fdan = fdan*fwhm
-		fan = fan*fwhm
+		fap = fap
+		fdan = fdan
+		fan = fan
 	else:
 		fap = fwhm
 		fdan = 2*fwhm

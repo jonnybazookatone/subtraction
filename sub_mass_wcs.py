@@ -195,11 +195,11 @@ if __name__ == "__main__":
         parser.add_option('--t', dest='template', help='template', default=None)
         parser.add_option('--w', dest='wregister', help='use wregister [Default: True]', default=None)
         parser.add_option('--b', dest='band', help='band', default=None)
-        parser.add_option('--OB', dest='OBList', help='OB list to use', default=None)
+        parser.add_option('--OB', dest='OBList', help='OB list to use', default=False)
         (options, args) = parser.parse_args()
 
 	if options.template and options.directory and options.band:
-		main(templatename, directory, band, wcsregister)
+		main(options.template, options.directory, options.band, options.wcsregister, options.OBList)
 	else:
 		print __doc__
 		sys.exit(0)

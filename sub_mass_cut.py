@@ -35,7 +35,7 @@ __status__ = "Prototype"
 
 Usage = """"""
 
-def main(directory, band=None, verbose=False, regionflag=None, OBList):
+def main(directory, band=None, verbose=False, regionflag=None, OBList=False):
 
 	print "------------------"
 	print "MASS PYRAF CUTTING"

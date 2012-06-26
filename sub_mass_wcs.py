@@ -189,6 +189,17 @@ if __name__ == "__main__":
 		else:
 			print __doc__
 			sys.exit(0)
+        
+        parser = OptionParser()
+        parser.add_option('--d', dest='directory', help='directory of OBs', default=None)
+        parser.add_option('--t', dest='template', help='template', default=None)
+        parser.add_option('--w', dest='wregister', help='use wregister [Default: True]', default=None)
+        parser.add_option('--b', dest='band', help='band', default=None)
+        parser.add_option('--OB', dest='OBList', help='OB list to use', default=None)
+        (options, args) = parser.parse_args()
 
-	print "Running..."
-	main(templatename, directory, band, wcsregister)
+	if options.template and options.directory and options.band:
+		main(templatename, directory, band, wcsregister)
+	else:
+		print __doc__
+		sys.exit(0)

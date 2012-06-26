@@ -33,7 +33,7 @@ __maintainer__ = "Jonny Elliott"
 __email__ = "jonnyelliott@mpe.mpg.de"
 __status__ = "Prototype"
 
-def main(TemplateImagePath, PATH, band=None, wcsregister=True):
+def main(TemplateImagePath, PATH, band=None, wcsregister=True, OBList=False):
 
 	# Logger
 	logger = {}
@@ -62,8 +62,11 @@ def main(TemplateImagePath, PATH, band=None, wcsregister=True):
 
 
 	# Look for all the OB folders
-	OBList = glob.glob("%s/OB*/" % (PATH))
-	print "OB list: %s" % OBList
+	if not OBList:
+		OBList = glob.glob("%s/OB*/" % (PATH))
+		print "OB list: %s" % OBList
+	else:
+		print "User defined OB list: %s" % OBList
 
 	# Now do image reshaping and print to user
 	for OBPath in OBList:

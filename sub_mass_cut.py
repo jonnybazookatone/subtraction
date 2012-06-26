@@ -10,7 +10,12 @@
 Summary:
         Make mass cuts
 Usage:
-        python sub_makemass_cut.py -d directory -b band -v True/False -r regionfile
+        python sub_makemass_cut.py --d directory --b band --v True/False --r regionfile
+        
+	d: directory of the remapped OB files
+	b: band
+	v: verbose output [Default: True]
+	r: region file for cutting [Default: False]
 
 """
 from python.imclass.image import imFits

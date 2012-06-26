@@ -10,7 +10,7 @@
 Summary:
         Remaps the images located in OB/band/* to the template pixel co-ordinates.
 Usage:
-        sub_mass_wcs.py -t tempalte -d dir -w True/False -b r
+        sub_mass_wcs.py --t tempalte --d dir --w True/False --b r --OB OB1_3
         
         t: template image
         d: directory of files OB/...
@@ -23,6 +23,7 @@ Usage:
 
 import python.subtraction.wcsremap as remap
 import os, re, glob, sys, getopt, shutil
+from optparse import OptionParser
 
 __author__ = "Jonny Elliott"
 __copyright__ = "Copyright 2012"
@@ -167,7 +168,12 @@ if __name__ == "__main__":
         (options, args) = parser.parse_args()
 
 	if options.template and options.directory and options.band:
-		main(options.template, options.directory, options.band, options.wcsregister, options.OBList)
+	  
+		if options.OBList:
+			OBList = options.OBList.split(",")
+		else:
+			OBList = options.OBList
+		main(options.template, options.directory, options.band, options.wcsregister, OBList)
 	else:
 		print __doc__
 		sys.exit(0)

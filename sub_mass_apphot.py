@@ -39,16 +39,16 @@ def main(directory, bandList, objint, apertures=False):
 	# 1. Find all the OBs
 	# 2. Go through all the bands and run the subroutine named sub_apphot.py
 
-
 	if apertures:
 		apfi = open(apertures, "r")
 		apfiline = apfi.readlines()
 		apfi.close()
-		
-		apfiline.replace("\n","").split(" ")
-		fap, fdan, fan = apfiline[0], apfiline[1], apfiline[2]
+		apfiline = apfiline[0].replace("\n","").split(" ")
+		fap, fdan, fan = float(apfiline[0]), float(apfiline[1]), float(apfiline[2])
+		print "loaded user apertures"
 	else:
 		fap, fdan, fan = False, False, False
+		print "using default apertures"
 
 	# OBs
 	#
@@ -79,12 +79,12 @@ if __name__ == "__main__":
         parser.add_option('-d', dest='directory', help='directory of OBs', default=None)
         parser.add_option('-b', dest='band', help='band', default=None)
         parser.add_option('-o', dest='objint', help='object of interest', default=None)
-        parser.add_option('-a', dest='apertures', help='apertures', default=None)
+        parser.add_option('-a', dest='apertures', help='apertures', default=False)
         (options, args) = parser.parse_args()
 
         if options.directory and options.band and options.objint:
 		band = options.band.split(",")
-                print main(options.directory, band, options.objint)
+                main(options.directory, band, options.objint, options.apertures)
         else:
                 print __doc__
                 sys.exit(0)

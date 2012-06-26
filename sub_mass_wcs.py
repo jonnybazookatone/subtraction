@@ -16,6 +16,7 @@ Usage:
         d: directory of files OB/...
         w: wcsregister [True], WCSREMAP [False]
         b: band [grizJHK], all = None
+        OB: an OB list separated by commas, default is all OBs
         
 
         output: OB/band/subtraction/remappings/input_remapping.fits

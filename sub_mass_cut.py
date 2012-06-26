@@ -35,7 +35,7 @@ __status__ = "Prototype"
 
 Usage = """"""
 
-def main(directory, band=None, verbose=False, regionflag=None):
+def main(directory, band=None, verbose=False, regionflag=None, OBList):
 
 	print "------------------"
 	print "MASS PYRAF CUTTING"
@@ -46,7 +46,12 @@ def main(directory, band=None, verbose=False, regionflag=None):
 
 	# Make folder list
 	print "Given directory: %s" % directory
-        OBList = glob.glob("%s/OB*" % directory)
+	if not OBList:
+		OBList = glob.glob("%s/OB*" % directory)
+		print "OBList: %s" % OBList
+	else:
+		print "User defined OBList: %s" % OBList
+
 	Missing_list = []
 	Skipped_list = []
 	if not band:

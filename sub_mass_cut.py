@@ -16,7 +16,8 @@ Usage:
 from python.imclass.image import imFits
 from python.subtraction.sub_cut import main as make_cut
 import python.subtraction.wcsremap as remap
-import os, re, glob, sys, getopt
+import os, re, glob, sys
+from optparse import OptionParser
 
 __author__ = "Jonny Elliott"
 __copyright__ = "Copyright 2012"
@@ -143,37 +144,22 @@ def main(directory, band=None, verbose=False, regionflag=None):
 
 if __name__ == "__main__":
 
-	# Key list for input & other constants, stupid final colon
-        key_list = 'd:v:b:r:'
 
-        # Check input
-        try:
-                x=sys.argv[1]
-        except:
-                print __doc__
-                sys.exit(0)
+        parser = OptionParser()
+        parser.add_option('--d', dest='directory', help='directory of OBs', default=None)
+        parser.add_option('--v', dest='verbose', help='verbose output', default=False)
+        parser.add_option('--r', dest='regionfile', help='region file for cutting', default=False)
+        parser.add_option('--b', dest='band', help='band', default=None)
+        parser.add_option('--OB', dest='OBList', help='OB list to use', default=False)
+        (options, args) = parser.parse_args()
 
-        # Take the input & sort it out
-	verbose = False
-	band = False
-	regionfile = False
-        option, remainder = getopt.getopt(sys.argv[1:], key_list)
-        for opt, arg in option:
-                flag = opt.replace('-','')
-                
-		if flag == "d":
-			directory = arg  
-		elif flag == "v":
-			if arg == "False":
-				verbose = False
-			else:
-				verbose = True
-		elif flag == "b":
-			band = arg
-		elif flag == "r":
-			regionfile = arg
+	if options.directory and options.band:
+	  
+		if options.OBList:
+			OBList = options.OBList.split(",")
 		else:
-			print __doc__
-			sys.exit(0)
-
-	copyFits = main(directory, band, verbose, regionfile)
+			OBList = options.OBList
+		copyFits = main(options.directory, options.band, options.verbose, options.regionfile, OBList)
+	else:
+		print __doc__
+		sys.exit(0)

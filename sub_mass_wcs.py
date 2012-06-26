@@ -157,38 +157,6 @@ def main(TemplateImagePath, PATH, band=None, wcsregister=True, OBList=False):
 
 
 if __name__ == "__main__":
-
-	# Key list for input & other constants, stupid final colon
-        key_list = 't:d:w:b:'
-
-	Usage = "sub_make_wcs.py -t template.fits -d output directory -w wcsregister (IRAF) [Default: WCSREMAP] -b band [Default: all]"
-
-        # Check input
-        try:
-                x=sys.argv[1]
-        except:
-                print __doc__
-                sys.exit(0)
-
-        # Take the input & sort it out
-        option, remainder = getopt.getopt(sys.argv[1:], key_list)
-        for opt, arg in option:
-                flag = opt.replace('-','')
-                
-                if flag == "t":
-			templatename = arg
-		elif flag == "d":
-			directory = arg  
-		elif flag == "w":
-			if arg == "True":
-				wcsregister = True
-			else:
-				wcsregister = False
-		elif flag == "b":
-			band = arg
-		else:
-			print __doc__
-			sys.exit(0)
         
         parser = OptionParser()
         parser.add_option('--d', dest='directory', help='directory of OBs', default=None)

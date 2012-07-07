@@ -86,7 +86,15 @@ def main(directory, bandList, objectOfInt):
                         # get FWHM and STDEV
                         print "Acquiring background standard deviation and median FWHM."
 			ReferenceImage.getBackgroundSTDEV()
-			ReferenceImage.getMyMedianFWHM()
+			
+			fwhmfile = "%s/%s/fwhm.dat" % (OB, band)
+			try:
+				fwhmf = open(fwhmfile, "r")
+				fwhm = float(fwhmf.readlines()[0].replace("\n",""))
+				print "FWHM taken from file"
+				ReferenceImage._MEDFWHM = fwhm
+			except:
+				ReferenceImage.getMyMedianFWHM()
 
 			if not chosenflag:
 	                        # Make a temporary object of interest

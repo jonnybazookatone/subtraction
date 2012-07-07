@@ -10,15 +10,17 @@
 Summary:
         Finds the best subtraction based on the MEAN and STDDEV of the closest object to the object of interest
 Usage:
-        sub_find_bestpants.py -d . -b 'all = grizJHK' -o objectofinterest.wcs
+        sub_find_bestpants.py --d . --b 'all = grizJHK' --o objectofinterest.wcs
         
         d: directory to run on
         b: band to run on
-        o: supply a file called "objectofinterest.dat", of the type "name ra dec" it will find a source closest to this. Otherwise it uses a default which will not work.
+        o: supply a file called "objectofinterest.dat", of the type "name ra dec" it will find a source closest to this.
 	   format of file:   "NAME" "RA" "DEC"
+	You can supply a file called "fwhm.dat" within the OB file. The script will use this fwhm rather than calculate its own from SEXtractor.
 """
-import os, glob, sys, shutil, getopt
+import os, glob, sys, shutil
 from python.imclass.image import imFits, imObject
+from optparse import OptionParser
 
 __author__ = "Jonny Elliott"
 __copyright__ = "Copyright 2012"
@@ -86,7 +88,17 @@ def main(directory, bandList, objectOfInt):
                         # get FWHM and STDEV
                         print "Acquiring background standard deviation and median FWHM."
 			ReferenceImage.getBackgroundSTDEV()
-			ReferenceImage.getMyMedianFWHM()
+			
+			fwhmfile = "%s/%s/fwhm.dat" % (OB, band)
+			try:
+				fwhmf = open(fwhmfile, "r")
+				fwhm = float(fwhmf.readlines()[0].replace("\n",""))
+				print "FWHM taken from file"
+				ReferenceImage._MEDFWHM = fwhm
+			except:
+				print "Calculating FWHM using SEXtractor"
+				ReferenceImage.getMyMedianFWHM()
+				
 
 			if not chosenflag:
 	                        # Make a temporary object of interest
@@ -183,36 +195,19 @@ def main(directory, bandList, objectOfInt):
 
 
 if __name__ == "__main__":
-        # Key list
-        key_list = "d:b:o:"
-        objectOfInt, directory, band = None, None, None
+                
+        parser = OptionParser()
+        parser.add_option('--d', dest='directory', help='directory of OBs', default=None)
+        parser.add_option('--b', dest='band', help='band', default=None)
+        parser.add_option('--o', dest='objint', help='object of interest', default=None)
+        (options, args) = parser.parse_args()
 
-        # Obtain input
-        option, remainder = getopt.getopt(sys.argv[1:], key_list)
-        for opt, arg in option:
-                flag = opt.replace('-','')
-
-                if flag == "d":
-                        directory = arg
-                elif flag == "b":
-                        if arg == "all":
-                                band == ["g", "r", "i", "z", "J", "H", "K"]
-                        else:
-                                band = [arg]
-                elif flag =="o":
-			objectOfInt = arg
-#               elif flag == "x":
-#                       ra = arg
-#               elif flag == "y":
-#                       dec = arg
-                else:
-                        print __doc__
-                        print sys.exit(0)
-
-        if directory and band:
-                print main(directory, band, objectOfInt)
+        if options.directory and options.band and options.objint:
+		band = options.band.split(",")
+                main(options.directory, band, options.objint)
         else:
                 print __doc__
                 sys.exit(0)
+                
 
 # Thu Dec 8 15:29:33 CET 2011

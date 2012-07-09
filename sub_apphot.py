@@ -11,6 +11,8 @@ Summary:
         Calculates the photometry for your given object, both in the normal images and the noise images (for errors).
 Usage:
         sub_apphot.py -d directory -b band -o objectfile
+
+	if a file called "fwhm.dat" exists within the image folder, it will use this as the FWHM. Format, "FWHM", if not there, SExtractor is used.
 """
 
 import sys
@@ -68,7 +70,16 @@ def main(directory, band, objectfile, fap=False, fdan=False, fan=False):
 	InitialImage._Band = band
         InitialImage._Name = "%s/%s/remcut_%s.fits" % (directory, InitialImage._Band, InitialImage._Band)
 	InitialImage.getBackgroundSTDEV()
-	InitialImage.getMyMedianFWHM()
+
+        fwhmfile = "%s/%s/fwhm.dat" % (directory, band)
+        try:
+		fwhmf = open(fwhmfile, "r")
+		fwhm = float(fwhmf.readlines()[0].replace("\n",""))
+		print "FWHM taken from file"
+		InitialImage._MEDFWHM = fwhm
+	except:
+		print "FWHM calculated by SExtractor"
+		InitialImage.getMyMedianFWHM()
 
 	# SubtractedImage
 	SubtractedImage = imFits()

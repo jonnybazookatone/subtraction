@@ -11,11 +11,16 @@ Summary:
         Hack for relative photometry utilising the output from gr_lc2.py.
 
 Usage:       
-        sub_relative_phot.py -r '*_rel.rxr' -s 'band_appmag.dat' -b 'band'
+        sub_relative_phot.py --r '*_rel.rxr' --s 'band_appmag.dat' --b 'band'
+        
+        r: the relative photometry file from the output of gr_lc2.py
+        s: magnitude file from sub_mass_apphot.py
+	b: band to do it on
 """
 
-import getopt, sys, numpy
+import sys, numpy
 import matplotlib.pyplot as plt
+from optparse import OptionParser
 
 __author__ = "Jonny Elliott"
 __copyright__ = "Copyright 2012"
@@ -111,31 +116,14 @@ def main(thomasfile, subfile, TIMEZP, band):
 if __name__ == "__main__":
 
 	timezp = 55822.89371528 
-
-        key_list = "r:s:b:"
-        rel, sub, band = None, None, None
-
-        # Obtain input
-        option, remainder = getopt.getopt(sys.argv[1:], key_list)
-        for opt, arg in option:
-                flag = opt.replace('-','')
-
-                if flag == "r":
-                        rel = arg
-                elif flag == "s":
-                        sub = arg
-		elif flag == "b":
-			band = arg
-#               elif flag == "x":
-#                       ra = arg
-#               elif flag == "y":
-#                       dec = arg
-                else:
-                        print __doc__
-                        sys.exit(0)
-
-	if sub and rel and band:
-	        main(rel, sub, timezp, band)
+        parser = OptionParser()
+        parser.add_option('--r', dest='rel', help='region file for cutting', default=False)
+        parser.add_option('--s', dest='sub', help='band', default=None)
+        parser.add_option('--b', dest='band', help='OB list to use', default=False)
+        (options, args) = parser.parse_args()
+        
+        if options.rel and options.sub and options.band:
+		main(options.rel, options.sub, timezp, options.band)
 	else:
 		print sys.exc_info()[0]
                 print __doc__

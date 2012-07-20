@@ -10,12 +10,13 @@
 Summary:
         Carry out photometry on all the "best" images found using hotpants.
 Usage:
-        sub_mass_apphot.py -d . -b r -o object.dat -a apertures
+        sub_mass_apphot.py --d . --b r --o object.dat --a apertures --OB OB1_1
 
 	d: directory
 	b: band [g,r,i,z,J,H,K], for more than one separate by commas, i.e. -band g,r,i
 	o: object of interest co-ordinate file (wcs)
 	a: apertures to use for your objects, must be a file, with format of "fap fdap fan", e.g. "1 2 3".
+	OB: list of OBs separated by commas
 """
 
 import sys
@@ -32,7 +33,7 @@ __maintainer__ = "Jonny Elliott"
 __email__ = "jonnyelliott@mpe.mpg.de"
 __status__ = "Prototype"
 
-def main(directory, bandList, objint, apertures=False):
+def main(directory, bandList, objint, apertures=False, OBList=False):
 
 	# Script outline
 	#
@@ -53,7 +54,10 @@ def main(directory, bandList, objint, apertures=False):
 	# OBs
 	#
 #	bandList = ['g', 'r', 'i', 'z', 'J', 'H']
-	OBList = glob.glob("%s/OB*" % directory)
+	if not OBList:
+		OBList = glob.glob("%s/OB*" % directory)
+	else:
+		OBList = OBList.split(",")
 	for band in bandList:
 		
 		# temp test
@@ -76,15 +80,16 @@ def main(directory, bandList, objint, apertures=False):
 if __name__ == "__main__":
   
         parser = OptionParser()
-        parser.add_option('-d', dest='directory', help='directory of OBs', default=None)
-        parser.add_option('-b', dest='band', help='band', default=None)
-        parser.add_option('-o', dest='objint', help='object of interest', default=None)
-        parser.add_option('-a', dest='apertures', help='apertures', default=False)
+        parser.add_option('--d', dest='directory', help='directory of OBs', default=None)
+        parser.add_option('--b', dest='band', help='band', default=None)
+        parser.add_option('--o', dest='objint', help='object of interest', default=None)
+        parser.add_option('--a', dest='apertures', help='apertures', default=False)
+        parser.add_option('--OB', dest='OBList', help='list of OBs', default=False)
         (options, args) = parser.parse_args()
 
         if options.directory and options.band and options.objint:
 		band = options.band.split(",")
-                main(options.directory, band, options.objint, options.apertures)
+                main(options.directory, band, options.objint, options.apertures, options.OBList)
         else:
                 print __doc__
                 sys.exit(0)

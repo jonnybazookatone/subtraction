@@ -10,12 +10,13 @@
 Summary:
         Run HOTPANTS with several different PSF and STAMP sizes
 Usage:
-        sub_mass_pypants.py --d directory --a True/False --v True/False --b r
+        sub_mass_pypants.py --d directory --a True/False --v True/False --b r --OB OB1_2
         
         d = directory with OB*/
         a = all or single PSF/STAMP combination
         v = verbose
         b = band
+	OB = OB list, default is does all
 
 """
 

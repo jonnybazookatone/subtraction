@@ -10,14 +10,16 @@
 Summary:
         Finds the best subtraction based on the MEAN and STDDEV of the closest object to the object of interest
 Usage:
-        sub_find_bestpants.py --d . --b 'all = grizJHK' --o objectofinterest.wcs
+        sub_find_bestpants.py --d . --b 'all = grizJHK' --o objectofinterest.wcs --OB OB1_1,OB1_2
         
         d: directory to run on
         b: band to run on
         o: supply a file called "objectofinterest.dat", of the type "name ra dec" it will find a source closest to this.
 	   format of file:   "NAME" "RA" "DEC"
 	You can supply a file called "fwhm.dat" within the OB file. The script will use this fwhm rather than calculate its own from SEXtractor.
+	OB: list of OBs to run the script on
 """
+
 import os, glob, sys, shutil
 from python.imclass.image import imFits, imObject
 from optparse import OptionParser
@@ -31,7 +33,7 @@ __maintainer__ = "Jonny Elliott"
 __email__ = "jonnyelliott@mpe.mpg.de"
 __status__ = "Prototype"
 
-def main(directory, bandList, objectOfInt):
+def main(directory, bandList, objectOfInt, OBList=None):
 
 	# Script outline
 	#
@@ -47,7 +49,8 @@ def main(directory, bandList, objectOfInt):
 
         # Make folder list
         print "Given directory: %s" % directory
-        OBList = glob.glob("%s/OB*" % directory)
+        if not OBList:
+		OBList = glob.glob("%s/OB*" % directory)
         Missing_list = []
         Skipped_list = []
 #        bandList = ["g", "r", "i", "z", "J", "H", "K"]
@@ -200,11 +203,13 @@ if __name__ == "__main__":
         parser.add_option('--d', dest='directory', help='directory of OBs', default=None)
         parser.add_option('--b', dest='band', help='band', default=None)
         parser.add_option('--o', dest='objint', help='object of interest', default=None)
+	parser.add_option('--OB', dest='OBList', help='OB list', default=None)
         (options, args) = parser.parse_args()
 
         if options.directory and options.band and options.objint:
 		band = options.band.split(",")
-                main(options.directory, band, options.objint)
+		OBList = options.OBList.split(",")
+                main(options.directory, band, options.objint, OBList)
         else:
                 print __doc__
                 sys.exit(0)

@@ -33,7 +33,7 @@ __maintainer__ = "Jonny Elliott"
 __email__ = "jonnyelliott@mpe.mpg.de"
 __status__ = "Prototype"
 
-def main(directory, bandList, objint, apertures=False, OBList=False):
+def main(directory, bandList, objint, apertures=False, OBList=False, cube="best"):
 
 	# Script outline
 	#
@@ -69,7 +69,7 @@ def main(directory, bandList, objint, apertures=False, OBList=False):
 		for OB in OBList:
 			
 			# Run sub_apphot
-			time, time_err, sub_mag, sub_magerr, noise_mag, noise_magerr, subobj, noiseobj = sub_apphot(OB, band, objint, fap=fap, fdan=fdan, fan=fan)
+			time, time_err, sub_mag, sub_magerr, noise_mag, noise_magerr, subobj, noiseobj = sub_apphot(OB, band, objint, fap=fap, fdan=fdan, fan=fan, cube=cube)
 
 			# Write
 			magfile.write("%s %s %s %s %s\n" % (OB, time, time_err, sub_mag, sub_magerr))
@@ -85,11 +85,12 @@ if __name__ == "__main__":
         parser.add_option('--o', dest='objint', help='object of interest', default=None)
         parser.add_option('--a', dest='apertures', help='apertures', default=False)
         parser.add_option('--OB', dest='OBList', help='list of OBs', default=False)
+	parser.add_option('--cube', dest='cube', help='cube folder', default="best")
         (options, args) = parser.parse_args()
 
         if options.directory and options.band and options.objint:
 		band = options.band.split(",")
-                main(options.directory, band, options.objint, options.apertures, options.OBList)
+                main(options.directory, band, options.objint, options.apertures, options.OBList, options.cube)
         else:
                 print __doc__
                 sys.exit(0)

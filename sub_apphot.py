@@ -29,7 +29,7 @@ __maintainer__ = "Jonny Elliott"
 __email__ = "jonnyelliott@mpe.mpg.de"
 __status__ = "Prototype"
 
-def main(directory, band, objectfile, fap=False, fdan=False, fan=False):
+def main(directory, band, objectfile, fap=False, fdan=False, fan=False, cube="best"):
 
 	# Open and parse objectfile
 	objectOfInterest = imObject()
@@ -84,7 +84,7 @@ def main(directory, band, objectfile, fap=False, fdan=False, fan=False):
 	# SubtractedImage
 	SubtractedImage = imFits()
 	SubtractedImage._Band = band
-	SubtractedImage._Name = "%s/%s/sub/best/diff_%s.fits" % (directory, SubtractedImage._Band, SubtractedImage._Band)
+	SubtractedImage._Name = "%s/%s/sub/%s/diff_%s.fits" % (directory, SubtractedImage._Band, cube, SubtractedImage._Band)
 	SubtractedImage._skySTDEV = InitialImage._skySTDEV
 	SubtractedImage._MEDFWHM = InitialImage._MEDFWHM
 
@@ -119,7 +119,7 @@ def main(directory, band, objectfile, fap=False, fdan=False, fan=False):
 	#
 	NoiseImage = imFits()
 	NoiseImage._Band = band
-	NoiseImage._Name = "%s/%s/sub/best/diff_%s_noise.fits" % (directory, NoiseImage._Band, NoiseImage._Band)
+	NoiseImage._Name = "%s/%s/sub/%s/diff_%s_noise.fits" % (directory, NoiseImage._Band, cube, NoiseImage._Band)
 
 	# Noise Squared
 	NoiseSquaredImage = imFits()

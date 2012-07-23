@@ -19,6 +19,9 @@ import glob
 import logging
 import optparse
 import numpy
+import sys
+import scipy
+import time
 
 import sub_lib
 import python.lib.resultFile as resultFile
@@ -50,6 +53,8 @@ def sub_mass_rel(inifile):
 	1. Copy all the .result files from the input folders
 	2. Obtain the stars for relative photometry
 	"""
+	tstart = time.time()
+
 	logger.info("--------------------------------------------")
 	logger.info("Parsing ini file: %s" % inifile)
 	sub_ini = sub_lib.parseIni(inifile)
@@ -80,6 +85,7 @@ def sub_mass_rel(inifile):
 
 	# Copy all the .result files to the correct OB location
 	calibArray = []
+	calibDict = {}
 	for OB in OBList:
 	
 		search = "%s/%s/%s/*.result" % (sub_ini["ADMIN"]["observationdir"], OB, sub_ini["ADMIN"]["band"])
@@ -141,7 +147,6 @@ def sub_mass_rel(inifile):
 		
 		logger.info("Median Relative Difference: %f +/- %f" % (MedianRelativeDifference, MedianRelativeError))
 		
-		calibDict = {}
 		calibDict[OB] = {}
 		calibDict[OB]["MAG_REL_DIFF"] = MedianRelativeDifference
 		calibDict[OB]["MAG_REL_DIFF_ERR"] = MedianRelativeError
@@ -153,15 +158,14 @@ def sub_mass_rel(inifile):
 	logger.info("To file: %s" % difffile)
 	diffout = open(difffile, "w")
 	for OB in calibDict:
-		
-		diffout.write("./%s %f %f" % (OB, calibDict[OB]["MAG_REL_DIFF"],calibDict[OB]["MAG_REL_DIFF_ERR"]))
+		diffout.write("./%s %f %f\n" % (OB, calibDict[OB]["MAG_REL_DIFF"],calibDict[OB]["MAG_REL_DIFF_ERR"]))
 	diffout.close()
-	
+
 	logger.info("--------------------------------------------")
 	logger.info("Creating Absolute+Relative calibration")
 	logger.info("--------------------------------------------")
 	
-	apphotfile = "%s/%s" % (sub_ini["ADMIN"]["subtractiondir"], sub_ini["PHOTOMETRY"]["appout"])
+	apphotfile = "%s/remappings/%s" % (sub_ini["ADMIN"]["subtractiondir"], sub_ini["PHOTOMETRY"]["appout"])
 	logger.info("Opening sub_apphot output: %s" % (apphotfile))
 	
 	appout = sub_lib.parseApp(apphotfile)
@@ -185,13 +189,49 @@ def sub_mass_rel(inifile):
 	for i in range(len(appDict["OB"])):
 	 
 		try:
-			tempCalib = calibDict[appDict["OB"][i].replace("./", "")]
-			mag = tempCalib["MAG_REL_DIFF"] + appDict["MAG"][i]
+			tempOB = appDict["OB"][i].replace("./","")
+			logger.info("\tOB: %s, %d/%d" % (tempOB, i+1, (len(appDict["OB"]))))			
+			tempCalib = calibDict[tempOB]
+			logger.info("\tKeys: %s" % tempCalib.keys())
+			mag = -tempCalib["MAG_REL_DIFF"] + appDict["MAG"][i]
 			mag_err = scipy.sqrt(tempCalib["MAG_REL_DIFF_ERR"]**2 + appDict["MAG_ERR"][i]**2)
+
+			logger.info("\tAdding to dictionaries.")
+			AbsCalib["OB"].append(tempOB)
+			AbsCalib["MAG"].append(mag)
+			AbsCalib["MAG_ERR"].append(mag_err)
+			if sub_ini["PHOTOMETRY"]["grbtzero"]:
+				logger.info("\tTime changed to t0 format.")
+				AbsCalib["TIME"].append((appDict["TIME"][i] - sub_ini["PHOTOMETRY"]["grbtzero"])*24.*60.*60.)
+			else:
+				logger.info("\tTime kept in MJD.")
+				AbsCalib["TIME"].append(appDict["TIME"][i])
+			AbsCalib["TIME_ERR"].append(appDict["TIME_ERR"][i])
+
+			logger.info("")
 			
 		except:
 			logger.warning("No OB match for: %s"  % appDict["OB"][i])
-		logger.info("%s" % appDict["OB"][i])
+			logger.warning("%s" % sys.exc_info()[0])
+			logger.info("")
+		#logger.info("%s" % appDict["OB"][i])
+	
+	logger.info("--------------------------------------------")
+	logger.info("Writing Absolute Photometry to file.")
+	logger.info("--------------------------------------------")
+	absfile = "%s/remappings/%s" % (sub_ini["ADMIN"]["subtractiondir"], sub_ini["PHOTOMETRY"]["relout"])
+	logger.info("To file: %s" % absfile)
+	absout = open(absfile, "w")
+
+	for i in range(len(AbsCalib["OB"])):
+		absout.write("./%s %f %f %f %f\n" % (AbsCalib["OB"][i], AbsCalib["TIME"][i], AbsCalib["TIME_ERR"][i], AbsCalib["MAG"][i], AbsCalib["MAG_ERR"][i]))
+	absout.close()
+
+	tfinish = time.time()
+
+	logger.info("--------------------------------------------")
+	logger.info("Finished in: %fs" % (tfinish-tstart))
+	logger.info("--------------------------------------------")
 	
 
 if __name__ == "__main__":
@@ -200,9 +240,9 @@ if __name__ == "__main__":
         parser.add_option('--ini', dest='ini', help='ini file', default=None)
         (options, args) = parser.parse_args()
         
-        
         if options.ini:
 		sub_mass_rel(options.ini)
 	else:
 		print __doc__
+
 # Tue Jun 19 09:57:43 BST 2012

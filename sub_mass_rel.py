@@ -21,7 +21,7 @@ import optparse
 import numpy
 
 import sub_lib
-import resultFile
+import python.lib.resultFile as resultFile
 
 __author__ = "Jonny Elliott"
 __copyright__ = "Copyright 2011"

@@ -174,7 +174,7 @@ if __name__ == "__main__":
 			OBList = options.OBList.split(",")
 		else:
 			OBList = options.OBList
-		main(options.template, options.directory, options.band, options.wcsregister, OBList)
+		main(options.template, options.directory, options.band, options.wregister, OBList)
 	else:
 		print __doc__
 		sys.exit(0)

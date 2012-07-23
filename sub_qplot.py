@@ -23,7 +23,7 @@ import sys
 import os
 import matplotlib
 import numpy
-matplotlib.use("WX")
+#matplotlib.use("WX")
 import matplotlib.pyplot as plt
 from optparse import OptionParser
 
@@ -101,8 +101,9 @@ if __name__ == "__main__":
         parser.add_option('--w', dest='write', help='write output', default=False)
         (options, args) = parser.parse_args()
 
-	if options.filelist and options.time:
+	if options.filelist:
 		plot(options.filelist, options.time, options.write)
+		plt.savefig("plot.eps")
 		plt.show()
 	else:
 		print __doc__

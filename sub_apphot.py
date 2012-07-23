@@ -143,6 +143,8 @@ def main(directory, band, objectfile, fap=False, fdan=False, fan=False, cube="be
 	
 	# Set the subtracted error from the noise image and not the error from the subtracted image
 	SubObject._appMagErr = subError
+
+	SubObject.printInfo()
 	
 	return SubObject._midMJD, SubObject._midMJDErr, SubObject._appMag, SubObject._appMagErr, NoiseObject._appMag, SubObject._appMagErr, SubObject, NoiseObject
 
